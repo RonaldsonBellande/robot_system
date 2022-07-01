@@ -1,0 +1,406 @@
+{
+  "openapi": "0.0.0",
+  "info": {
+    "title": "Multi-Robot REST API-Client",
+    "description": "The Multi-Robot contains a configuration for components and instances as it allows to dynamically start, change, and modify containers in an ordered manner and allows mutiple clients to change the state of the components and the states of the system; as components can be additionally configured during runtime without having to restart and instances can also be changed dynamically as well without restart by adding costum xml tags to the robot and devise discription",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "ronaldsonbellande@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "0.0.0"
+  },
+  "externalDocs": {
+    "description": "More about the Multi Robot Server",
+    "url": "https://github.com/Robotics-Sensors/robot_system"
+  },
+  "servers": [
+    {
+      "url": "<server ip/url>:5001"
+    },
+    {
+      "url": "http://{local_host}:{port}",
+      "variables": {
+        "local_host": {
+          "default": "127.0.0.1"
+        },
+        "port": {
+          "default": "5000"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "AvailComps",
+      "description": "Available Components"
+    },
+    {
+      "name": "Instances",
+      "description": "Running instances of components"
+    }
+  ],
+  "paths": {
+    "/AvailComps": {
+      "get": {
+        "tags": [
+          "AvailComps"
+        ],
+        "summary": "Get components",
+        "operationId": "getAvailComps",
+        "responses": {
+          "405": {
+            "description": "Validation exception",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AvailComps"
+        ],
+        "summary": "Register new available component to Multi-Robot",
+        "operationId": "postAvailCops",
+        "requestBody": {
+          "description": "Component to be registered to server",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ros_comp"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "405": {
+            "description": "Invalid input",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "Component"
+      }
+    },
+    "/AvailComps/{name}": {
+      "get": {
+        "tags": [
+          "AvailComps"
+        ],
+        "summary": "Get component by name",
+        "description": "Returns the specified component",
+        "operationId": "getAvailComp",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Pretty name of the component",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Component not found",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AvailComps"
+        ],
+        "summary": "Delete component by name",
+        "operationId": "deleteAvailComp",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Pretty name of the component",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Component not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/Instances": {
+      "get": {
+        "tags": [
+          "Instances"
+        ],
+        "summary": "Get all running instances",
+        "responses": {
+          "405": {
+            "description": "Invalid input",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Instances"
+        ],
+        "summary": "Start new instance of component",
+        "requestBody": {
+          "description": "Component to start",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/start_comp"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "405": {
+            "description": "Invalid input",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "Component name"
+      },
+      "delete": {
+        "tags": [
+          "Instances"
+        ],
+        "summary": "Stop all instances",
+        "responses": {
+          "405": {
+            "description": "Invalid input",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/Instances/{inst_id}": {
+      "get": {
+        "tags": [
+          "Instances"
+        ],
+        "summary": "Get instance by id",
+        "parameters": [
+          {
+            "name": "inst_id",
+            "in": "path",
+            "description": "ID of the instance",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Instances"
+        ],
+        "summary": "Stop instance by name",
+        "parameters": [
+          {
+            "name": "inst_id",
+            "in": "path",
+            "description": "ID of the instance",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/Instances/{inst_id}/inst/urdf": {
+      "post": {
+        "tags": [
+          "Instances"
+        ],
+        "summary": "Update URDF of instance",
+        "parameters": [
+          {
+            "name": "inst_id",
+            "in": "path",
+            "description": "ID of the instance",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "String serialized URDF",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/urdf"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/urdf"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "405": {
+            "description": "Invalid input",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "URDF"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "urdf": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "data": "string serialized URDF with custom xml-tags"
+        }
+      },
+      "start_comp": {
+        "type": "object",
+        "properties": {
+          "comp_name": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "comp_name": "UR5"
+        }
+      },
+      "ros_comp": {
+        "type": "object",
+        "properties": {
+          "components": {
+            "type": "object",
+            "properties": {
+              "comp_type": {
+                "type": "string",
+                "default": "ros"
+              },
+              "docker": {
+                "type": "object",
+                "properties": {}
+              },
+              "max_instances": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "pretty_name": {
+                "type": "string"
+              },
+              "urdf": {
+                "type": "object",
+                "properties": {
+                  "dyn": {
+                    "type": "string"
+                  },
+                  "stat": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "components": [
+            {
+              "comp_type": "ros",
+              "docker": {
+                "command": "roslaunch ur6 ur6_gazebo",
+                "detach": true,
+                "environment": [
+                  "ROS_MASTER_URI=http://ros1_base:11311"
+                ],
+                "image": "ros1_ur6",
+                "network": "docker_rosnet",
+                "volumes": {
+                  "docker_MeshVolume": {
+                    "bind": "/home/Mesh",
+                    "mode": "rw"
+                  }
+                }
+              },
+              "max_instances": 10,
+              "pretty_name": "UR6",
+              "urdf": {
+                "dyn": "example urdf with custom urdf tags",
+                "stat": "example urdf"
+              }
+            }
+          ]
+        }
+      },
+      "unity_comp": {
+        "type": "object",
+        "properties": {
+          "components": {
+            "type": "object",
+            "properties": {
+              "comp_type": {
+                "type": "string",
+                "default": "unity"
+              },
+              "max_instances": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "pretty_name": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "example": {
+          "components": [
+            {
+              "comp_type": "unity",
+              "max_instances": 1,
+              "pretty_name": "Lidar4D",
+              "urdf": {
+                "dyn": "nice_udrf",
+                "stat": "nicer_urdf_stat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

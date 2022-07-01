@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+        
+  multi_robot_server:
+    image: multirobotapt/multirobot-ui
+    container_name: multi_robot_server
+    ports:
+      - "5001:8080"
+    volumes:
+      - "./multi_robot_config:/foo"
+    environment:
+     - SWAGGER_JSON=/foo/multi_robot_Manager_cfg.json
+
+networks:
+  rosnet:
+    driver: bridge
+
+volumes:
+   MeshVolume:
